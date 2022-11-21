@@ -43,95 +43,6 @@ class SearchProblem:
         """
         util.raiseNotDefined()
 
-
-def tinyMazeSearch(problem):
-    """
-    Returns a sequence of moves that solves tinyMaze.  For any other maze, the
-    sequence of moves will be incorrect, so only use this for tinyMaze.
-    """
-    from game import Directions
-    s = Directions.SOUTH
-    w = Directions.WEST
-    return  [s, s, w, s, w, w, s, w]
-
-def depthFirstSearch(problem):
-    """
-    Search the deepest nodes in the search tree first.
-
-    Your search algorithm needs to return a list of actions that reaches the
-    goal. Make sure to implement a graph search algorithm.
-
-    To get started, you might want to try some of these simple commands to
-    understand the search problem that is being passed in:
-
-    print("Start:", problem.getStartState())
-    print("Is the start a goal?", problem.isGoalState(problem.getStartState()))
-    print("Start's successors:", problem.getSuccessors(problem.getStartState()))
-    """
-    "*** YOUR CODE HERE ***"
-    # Initializing
-    start=problem.getStartState()
-    openlst = util.Stack()
-    visited=[]
-    #Push starting vertex into open stack
-    openlst.push((start,[]))
-
-    # While stack not empty
-    while not openlst.isEmpty():
-        # pop top vertex from stack
-        current = openlst.pop()
-        pos = current[0]
-        path = current[1]
-
-        # if goal node is reached then return the path
-        if problem.isGoalState(pos):
-            return path
-
-        # if the current node is not in visited list
-        if pos not in visited:
-            # mark current node as explored
-            visited.append(pos)
-            # Generate neighbors of vertex
-            neighbours = problem.getSuccessors(pos)
-
-            # push current nodes neighbours into the openlist
-            for x in neighbours:
-                newpath = (x[0], path + [x[1]])
-                openlst.push(newpath)
-
-
-    # If stack empty then return empty path
-    return []
-
-
-def breadthFirstSearch(problem):
-    """Search the shallowest nodes in the search tree first."""
-    "*** YOUR CODE HERE ***"
-
-    # Similar to DFS only change is Queue not Stack
-    visited=[]
-    start=problem.getStartState()
-    openlst = util.Queue()
-    openlst.push((start,[]))
-
-    while not openlst.isEmpty():
-        current = openlst.pop()
-        pos = current[0]
-        path = current[1]
-
-        if problem.isGoalState(pos):
-                return path
-
-        if pos not in visited:
-            visited.append(pos)
-            neighbours = problem.getSuccessors(pos)
-            for x in neighbours:
-                newpath = (x[0], path + [x[1]])
-                openlst.push(newpath)
-
-    return []
-
-
 def uniformCostSearch(problem):
     """Search the node of least total cost first."""
     "*** YOUR CODE HERE ***"
@@ -210,10 +121,6 @@ def aStarSearch(problem, heuristic=nullHeuristic):
 
     return []
 
-
-
 # Abbreviations
-bfs = breadthFirstSearch
-dfs = depthFirstSearch
 astar = aStarSearch
 ucs = uniformCostSearch
