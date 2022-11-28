@@ -3,6 +3,10 @@ import numpy as np
 from vehicle import vehicle
 
 
+class Car:
+    pass
+
+
 def parseStringToMap(grid, str):
         def split(word):
             return list(word)
