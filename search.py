@@ -82,13 +82,7 @@ def nullHeuristic(state, problem=None):
     return 0
 
 def aStarSearch(problem, heuristic=nullHeuristic):
-    """Search the node that has the lowest combined cost and heuristic first."""
-    "*** YOUR CODE HERE ***"
-    '''
-    g(n): distance between curr and start node
-    h(n): estimated distance from curr to goal node
-    f(n): total cost of node; start node to goal node
-    '''
+
     start=problem.getStartState()
     openlst = util.PriorityQueue()
     visited=[]
