@@ -104,42 +104,37 @@ def a_star(grid, heuristic):
 def numberOfBlockingCars(grid):
     x = 5
     blockingCars = []
-    while int x > 0:
-            valueInCell = grid.map[2][x]
-            if valueInCell == 'A':
-                x = 0
-                break
-            elif not valueInCell ==  '.':
-                if (valueInCell not in blockingCars):
-                    blockingCars.append(valueInCell)
-            x -= 1
+    blockedPositions = 0
+    rightOfAmbulance = 5
+    while rightOfAmbulance > 0 :
+            cell = grid.map[2][rightOfAmbulance]
+            if cell ==  '.':
+                blockedPositions += 1
+            else
+                blockedPositions +=0
     return len(blockingCars)
 
 def blockedPositions(grid):
-    valueInCell = 0
-    x = 5
-    while x > 0 :
-            cell = grid.map[2][x]
-            if cell == 'A':
-                x = 0
-                break
-            elif not cell ==  '.':
-                valueInCell +=1
-
-            x -= 1
-    return valueInCell
+    blockedPositions = 0
+    rightOfAmbulance = 5
+    while rightOfAmbulance > 0 :
+            cell = grid.map[2][rightOfAmbulance]
+            if cell ==  '.':
+                blockedPositions += 0
+                else
+                blockedPositions +=1
+    return blockedPositions
 
 def blockedCarsMultiplied(grid):
     lm = 5
-    valueInCell = 0
     x = 5
-    while x > 0 :
-            cell = grid.map[2][x]
-            if cell == 'A':
-                x = 0
-                break
-            elif not cell ==  '.':
-                valueInCell +=1
-
-            x -= 1
-    return valueInCell * lm
+    blockingCars = []
+    blockedPositions = 0
+    rightOfAmbulance = 5
+    while rightOfAmbulance > 0 :
+            cell = grid.map[2][rightOfAmbulance]
+            if cell ==  '.':
+                blockedPositions += 1
+            else
+                blockedPositions +=0
+    return x * lm
