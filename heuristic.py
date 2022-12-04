@@ -1,3 +1,4 @@
+from Car import Car
 from State import State
 ##do we need grids?
 
@@ -205,3 +206,60 @@ def findGoalStateWithLowestCost(goalStates:List[State]):
             lowestCostState = x
 
     return lowestCostState
+
+def heuristic(grid,h):
+        if(h == 'h1'):
+            return grid.heuristicOne()
+        elif(h =='h2'):
+            return grid.heuristicTwo()
+        elif(h=='h3'):
+            return grid.heuristicThree()
+        else:
+            return grid.heuristicOne()
+
+
+    def heuristicOne(grid):
+        value = 0
+        x = 5
+        blockingCars = []
+        while x > 0 :
+                cell = grid.map[2][x]
+                if cell == 'A':
+                    x = 0
+                    break
+                elif not cell ==  '.':
+                    if (cell not in blockingCars):
+                        blockingCars.append(cell)
+                        value +=1
+
+                x -= 1
+        return value
+
+    def heuristicTwo(grid):
+        value = 0
+        x = 5
+        while x > 0 :
+                cell = grid.map[2][x]
+                if cell == 'A':
+                    x = 0
+                    break
+                elif not cell ==  '.':
+                    value +=1
+
+                x -= 1
+        return value
+
+    def heuristicThree(grid):
+        multipler = 5 #Hard coded
+        value = 0
+        x = 5
+        while x > 0 :
+                cell = grid.map[2][x]
+                if cell == 'A':
+                    x = 0
+                    break
+                elif not cell ==  '.':
+                    value +=1
+
+                x -= 1
+        return value * multipler
