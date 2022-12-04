@@ -1,4 +1,5 @@
 from Car import Car
+from Board import Board
 
 
 class State:
@@ -71,10 +72,12 @@ class State:
         for car in self.cars:
             cloned.cars.append(Car(car.occupy_square, car.vert, car.fuel, car.removed, car.ambulance, car.name))
         cloned.goal = self.goal.copy()
+        cloned.goal = Board()
         cloned_board = cloned.build_board()
         return cloned_board
 
     def build_board(self):  # makes 2D array of spaces and pieces on the space
+        board = Board()
         board = [["."] * 6 for i in range(6)]
         for car in self.cars:
             for coord in car.occupy_square:
@@ -87,11 +90,10 @@ class State:
             print(i)
         print("\n")
 
-    def get_moves(self):
+    def get_moves(self, board=build_board()):
         print("Coordinates work as (vertical, horizontal)")
-        board = self.build_board()
         all_moves = []
-        for car in self.cars:
+        for index, car in enumerate(self.cars):
             if car.get_fuel() > 0:
                 for coord in car.occupy_square:
                     if car.vert:
@@ -106,8 +108,10 @@ class State:
                             for i in down_move:
                                 print(i)
                             print("\n")
+                            down_move.cost = down_move.cost + 1
                             all_moves.append(down_move)
                             car.consume_gas()
+
                             print("Car fuel remaining for car " + car.name + " is " + str(car.fuel))
                         elif coord[0] + 1 >= 6:
                             print("The car " + car.name + " can not move to downwards from square " + str(
@@ -191,6 +195,7 @@ class State:
 
         print("All nodes created from the original board with just one move made: ")
         for i in all_moves:
+            # print("This node has a cost of" + i.cost)
             for k in i:
                 print(k)
             print("\n")
