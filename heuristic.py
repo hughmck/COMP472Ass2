@@ -8,7 +8,6 @@ from typing import List
 import time
 
 
-
 def UniformCostSearch(grid):
     OPEN = pq()
     CLOSED = []
@@ -17,8 +16,8 @@ def UniformCostSearch(grid):
     stateSearchCount = 0
 
     #Initial State
-    initialState = State(cost = 0, grid = grid)
-    subState = None
+    initialState = State(cost = 0, grid = grid) ##compare our state to theirs, what should we input here to set up the initial state
+    subState = None ##this is the state before it, might not need it for now
 
     OPEN.insert(initialState)
     searchDetails += initialState.getStateSearchDetail() + '\n'
@@ -31,9 +30,9 @@ def UniformCostSearch(grid):
         # print('GoalState size:', len(goalStates) )
 
         #SUCCESS
-        if len(goalStates) > 0:
+        if len(goalStates) > 0: ##make a goal state
             final_time = time.time() - start_time
-            return subState, searchDetails, final_time, stateSearchCount
+            return subState, searchDetails, final_time, stateSearchCount ##figure out what all these mean
 
         #FAILURE
         if OPEN.isEmpty():
@@ -57,7 +56,7 @@ def UniformCostSearch(grid):
             for car, moves in soloMovement.items():
                 car = Car(car)
                 #iterate through all possible moves for a car
-                for move in moves:
+                for move in moves: ##all moves that we have
 
                     #Update the grid
                     subState = doMovement(leftMostState, car.name, move, searchDetails)
