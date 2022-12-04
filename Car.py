@@ -10,8 +10,8 @@ class Car:
         self.ambulance = ambulance
         self.name = name
 
-    def consume_gas(self, fuel_remaining):
-        self.fuel -= fuel_remaining
+    def consume_gas(self):
+        self.fuel = self.fuel - 1
 
     def get_fuel(self):
         return self.fuel
