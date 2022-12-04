@@ -1,264 +1,140 @@
 from Car import Car
 from State import State
-##do we need grids?
 
-import queue as Q
 from PriorityQueue import PriorityQueue as pq
 from typing import List
 import time
 
 
-def UniformCostSearch(grid):
-    OPEN = pq()
-    CLOSED = []
-    goalStates = []
-    searchDetails = ''
-    stateSearchCount = 0
-
-    #Initial State
-    initialState = State(cost = 0, grid = grid) ##compare our state to theirs, what should we input here to set up the initial state
-    subState = None ##this is the state before it, might not need it for now
-
-    OPEN.insert(initialState)
-    searchDetails += initialState.getStateSearchDetail() + '\n'
-    start_time = time.time()
-
-    #Start search
-    while True:
-        #Check if no more options are left to be explored
-        # print('OPEN size:', len(OPEN.queue) )
-        # print('GoalState size:', len(goalStates) )
-
-        #SUCCESS
-        if len(goalStates) > 0: ##make a goal state
-            final_time = time.time() - start_time
-            return subState, searchDetails, final_time, stateSearchCount ##figure out what all these mean
-
-        #FAILURE
-        if OPEN.isEmpty():
-            final_time = time.time() - start_time
-            return initialState, searchDetails, final_time, stateSearchCount
-
-        #get leftMost state
-        leftMostState = OPEN.get()
-
-        CLOSED.append(leftMostState)
-        #Check if goal state achieved for AA if yes, add to completedArray
-
-        leftMostGrid = leftMostState.grid
-        allMovements = leftMostGrid.getMoves()
-
-        for soloMovement in allMovements:
-
-            if len(goalStates) != 0:
-                break
-
-            for car, moves in soloMovement.items():
-                car = Car(car)
-                #iterate through all possible moves for a car
-                for move in moves: ##all moves that we have
-
-                    #Update the grid
-                    subState = doMovement(leftMostState, car.name, move, searchDetails)
+def UniformCostSearch(grid): ##do we take grids as an argument or all moves?
+    openStates = pq() ##initializing a priority queue of open nodes, will need to be constantly sorted
+    closedStates = []
+    goalStates = [] ##has the function reached a goal state? if yes, return
+    initialState = State(cost = 0, grid = grid) ##initializing cost to 0 and trying to bring in the grid
 
 
-                    #Update the cost
-                    prevG = leftMostState.g
-                    newG = prevG + 1
-                    subState.g = newG
+    #adding the first initial state
+    openStates.appendState(initialState)
+    startingTime = time.time()
 
-                    #UCS cost is always edge cost --> g
-                    subState.f = newG
-                    subState.cost = newG
+    #starting the search
+    while len(goalStates) == 0:
+        #was unable to find a solution
+        if openStates.queueIsEmpty():
+            totalRunTime = time.time()
+            return initialState, totalRunTime, len(closedStates)
 
-                    #Update searchDetails
-                    searchDetails += subState.getStateSearchDetail() + '\n'
-
-                    #CHECK IF IN CLOSED
-                    openStateWithSameGridAsSubstate = checkForSameGridInOpen(OPEN, subState)
-                    closedStateWithSameGridAsSubstate = checkForSameGridInClosed(CLOSED, subState)
-
-                    #check if movement results into winning if not do state add to queue evaluation
-                    if subState.grid.isGoalSpace():
-                        goalStates.append(subState)
-                        break
-
-                    #add new subState if not same grid is found in the OPEN queue
-                    elif openStateWithSameGridAsSubstate is None and closedStateWithSameGridAsSubstate is None: #would probably evaluate if same state already in OPEN but compare cost
-
-                        # Count the amount of state change done
-                        stateSearchCount += 1
-
-                        OPEN.insert(subState)
-                        #Check if substate has car possible for exit
-                        subState.grid.removeExitCar()
-                    else:
-                        #if same grid found with lower cost, we ignore the new substate
-                        #if same grid but higher cost, we add new one and discard the more expensive state from OPEN
-
-                        if openStateWithSameGridAsSubstate is not None and subState.cost < openStateWithSameGridAsSubstate.cost:
-                            # Count the amount of state change done
-                            stateSearchCount += 1
+        if len(goalStates ==1) :
+            totalRunTime = time.time()
+            return totalRunTime, len(closedStates), State
 
 
-                            #remove state from queue
-                            OPEN.getState(openStateWithSameGridAsSubstate)
-                            OPEN.insert(subState)
+        for i in allMoves    ##iterate through all moves in the state
+        firstSearchState = allMoves[i]
 
-                        #Check if substate has car possible for exit
-                        subState.grid.removeExitCar()
+        ##if cost is greater than comparison state add to closed state
+        closedStates.append(firstSearchState)
 
-
-def GBFS(grid, heuristic):
-    OPEN = pq()
-    CLOSED = []
-    goalStates = []
-    searchDetails = ''
-    #Initial State
-    starting_heuristic = grid.heuristic(heuristic)
-    initialState = State(cost = starting_heuristic, grid = grid)
-    subState = None
-
-    OPEN.insertH(initialState)
-    start_time = time.time()
-    searchDetails += subState.getStateSearchDetail() + '\n'
-
-    #Start search
-    while True:
-        #Check if no more options are left to be explored
-        # print('OPEN size:', len(OPEN.queue) )
-        # print('GoalState size:', len(goalStates) )
+        allMoves = State.getMoves()
 
 
-        #SUCCESS
-        if len(goalStates) > 0:
-            final_time = time.time() - start_time
-            return subState, searchDetails, final_time
-
-        #FAILURE
-        if OPEN.isEmpty():
-            if len(goalStates) == 0:
-                final_time = time.time() - start_time
-                return initialState, searchDetails, final_time
-
-        #get leftMost state
-        leftMostState = OPEN.get()
-
-        CLOSED.append(leftMostState)
-        #Check if goal state achieved for AA if yes, add to completedArray
-
-        leftMostGrid = leftMostState.grid
-        allMovements = leftMostGrid.getMoves()
-
-        for soloMovement in allMovements:
-
-            if len(goalStates) != 0:
-                break
-
-            for car, moves in soloMovement.items():
-                car = Car(car)
-                #iterate through all possible moves for a car
-                for move in moves:
-
-                    #Update the grid
-                    subState = doMovement(leftMostState, car.name, move, searchDetails)
-
-                    #Update the cost
+def GBFS(grid, heuristic): ##GBFS also takes in a heuristic function
+    openStates = pq() ##initializing a priority queue of open nodes, will need to be constantly sorted
+    closedStates = []
+    goalStates = [] ##has the function reached a goal state? if yes, return
+    initialState = State(cost = 0, grid = grid) ##initializing cost to 0 and trying to bring in the grid
 
 
-                    newCost = leftMostState.cost + 1
-                    subState.cost = newCost
-                    subState.h = subState.grid.heuristic(heuristic)
+    #adding the first initial state
+    openStates.appendState(initialState)
+    startingTime = time.time()
 
-                    #Update searchDetails
-                    searchDetails += subState.getStateSearchDetail() + '\n'
+    #starting the search
+    while len(goalStates) == 0:
+        #was unable to find a solution
+        if openStates.queueIsEmpty():
+            totalRunTime = time.time()
+            return initialState, totalRunTime, len(closedStates)
 
-                    #would calculate heuristic here???
-                    stateWithSameGridAsSubstate = checkForSameGridInOpen(OPEN, subState)
-                    closedStateWithSameGridAsSubstate = checkForSameGridInClosed(CLOSED, subState)
-
-                    #check if movement results into winning if not do state add to queue evaluation
-                    if subState.grid.isGoalSpace():
-                        goalStates.append(subState)
-                        break
-
-                    #add new subState if not same grid is found in the OPEN queue
-                    elif stateWithSameGridAsSubstate is None and closedStateWithSameGridAsSubstate is None: #would probably evaluate if same state already in OPEN but compare cost
-                        OPEN.insertH(subState)
-                        #Check if substate has car possible for exit
-                        subState.grid.removeExitCar()
-                    else:
-                        #if same grid found with lower cost, we ignore the new substate
-                        #if same grid but higher cost, we add new one and discard the more expensive state from OPEN
-                        if stateWithSameGridAsSubstate is not None and subState.cost < stateWithSameGridAsSubstate.cost:
-                            #remove state from queue
-                            OPEN.getState(stateWithSameGridAsSubstate)
-                            OPEN.insertH(subState)
-                        #Check if substate has car possible for exit
-                        subState.grid.removeExitCar()
+        if len(goalStates ==1) :
+            totalRunTime = time.time()
+            return totalRunTime, len(closedStates), State
 
 
-def findGoalStateWithLowestCost(goalStates:List[State]):
-    lowestCostState = goalStates[0]
-    for x in goalStates:
-        if x.cost < lowestCostState.cost:
-            lowestCostState = x
+        for i in allMoves    ##iterate through all moves in the state
+        firstSearchState = allMoves[i]
 
-    return lowestCostState
+        ##if cost is greater than comparison state add to closed state
+        closedStates.append(firstSearchState)
 
-def heuristic(grid,h):
-        if(h == 'h1'):
-            return grid.heuristicOne()
-        elif(h =='h2'):
-            return grid.heuristicTwo()
-        elif(h=='h3'):
-            return grid.heuristicThree()
-        else:
-            return grid.heuristicOne()
+        allMoves = State.getMoves()
+
+def a_star(grid, heuristic):
+    openStates = pq() ##initializing a priority queue of open nodes, will need to be constantly sorted
+    closedStates = []
+    goalStates = [] ##has the function reached a goal state? if yes, return
+    initialState = State(cost = 0, grid = grid) ##initializing cost to 0 and trying to bring in the grid
+
+    #adding the first initial state
+    openStates.appendState(initialState)
+    startingTime = time.time()
+
+    #starting the search
+    while len(goalStates) == 0:
+        #was unable to find a solution
+        if openStates.queueIsEmpty():
+            totalRunTime = time.time()
+            return initialState, totalRunTime, len(closedStates)
+
+        if len(goalStates ==1) :
+            totalRunTime = time.time()
+            return totalRunTime, len(closedStates), State
 
 
-    def heuristicOne(grid):
-        value = 0
-        x = 5
-        blockingCars = []
-        while x > 0 :
-                cell = grid.map[2][x]
-                if cell == 'A':
-                    x = 0
-                    break
-                elif not cell ==  '.':
-                    if (cell not in blockingCars):
-                        blockingCars.append(cell)
-                        value +=1
+        for i in allMoves    ##iterate through all moves in the state
+        firstSearchState = allMoves[i]
 
-                x -= 1
-        return value
+        ##if cost is greater than comparison state add to closed state
+        closedStates.append(firstSearchState)
 
-    def heuristicTwo(grid):
-        value = 0
-        x = 5
-        while x > 0 :
-                cell = grid.map[2][x]
-                if cell == 'A':
-                    x = 0
-                    break
-                elif not cell ==  '.':
-                    value +=1
+        allMoves = State.getMoves()
+    return State, closed
 
-                x -= 1
-        return value
 
-    def heuristicThree(grid):
-        multipler = 5 #Hard coded
-        value = 0
-        x = 5
-        while x > 0 :
-                cell = grid.map[2][x]
-                if cell == 'A':
-                    x = 0
-                    break
-                elif not cell ==  '.':
-                    value +=1
+def numberOfBlockingCars(grid):
+    x = 5
+    blockingCars = []
+    blockedPositions = 0
+    rightOfAmbulance = 5
+    while rightOfAmbulance > 0 :
+            cell = grid.map[2][rightOfAmbulance]
+            if cell ==  '.':
+                blockedPositions += 1
+            else
+                blockedPositions +=0
+    return len(blockingCars)
 
-                x -= 1
-        return value * multipler
+def blockedPositions(grid):
+    blockedPositions = 0
+    rightOfAmbulance = 5
+    while rightOfAmbulance > 0 :
+            cell = grid.map[2][rightOfAmbulance]
+            if cell ==  '.':
+                blockedPositions += 0
+                else
+                blockedPositions +=1
+    return blockedPositions
+
+def blockedCarsMultiplied(grid):
+    lm = 5
+    x = 5
+    blockingCars = []
+    blockedPositions = 0
+    rightOfAmbulance = 5
+    while rightOfAmbulance > 0 :
+            cell = grid.map[2][rightOfAmbulance]
+            if cell ==  '.':
+                blockedPositions += 1
+            else
+                blockedPositions +=0
+    return x * lm

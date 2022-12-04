@@ -2,6 +2,7 @@
 import numpy as np
 from textwrap import wrap
 
+
 # Returns a list of lists of lists
 
 # First list contains every single grid,
@@ -17,32 +18,23 @@ def function(str, k):
                 lst.append(j)
             print(' '.join(lst))
 
-def readfile():
+
+def readFile():
     path = 'Sample/sample-input.txt'
-    grids=[]
+    grids = []
     with open(path) as f:
-        lines = f.readlines() #reads in as list
+        lines = f.readlines()  # reads in as list
         for i in lines:
             if not (i.startswith('#') or (i.startswith('\n'))):
-                i.strip()
+                i.strip()  # each i is a string that looks like this "IJBBCCIJDDL.IJAAL.EEK.L...KFF..GGHH. F0 G6"
                 grids.append(i)
-    board = []
-    fuel = []
-    for i in grids:
-        grid = wrap(i[:36], 6)
-        b = []
-        f = i[36:]
-        fuel.append(f)
-        for j in grid:
-            j = list(j)
-            b.append(j)
-        board.append(b)
 
-    return board,fuel
+    return grids  # list of puzzle but return only the first to work on for now
+
 
 if __name__ == "__main__":
     # To access one grid, index at the position or loop through, board[i]
-    grids, fuel = readfile() # grids and fuel have corresponding index.
+    grids, fuel = readfile()  # grids and fuel have corresponding index.
 
     for i in grids:
         print(np.matrix(i))
