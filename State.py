@@ -200,3 +200,13 @@ class State:
                 print(k)
             print("\n")
         return all_moves
+
+    def removeExitCar(grid):
+        if grid.map[2][4] != '.' and grid.map[2][4] == grid.map[2][5]:
+            carAtExit = grid.getCarByName(grid.map[2][5]) ##are we using grid or puzzles?
+            print('Removing car -> ', carAtExit.name)
+            carAtExit.start = None
+            carAtExit.end = None
+            carAtExit.isOnGrid = False
+            grid.map[2][4] = '.'
+            grid.map[2][5] = '.'
