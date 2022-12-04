@@ -2,7 +2,7 @@ from Car import Car
 
 
 class State:
-    def __init__(self): #grid will start at top left point 0,0 | top right
+    def __init__(self):  # grid will start at top left point 0,0 | top right
         self.gridSize = 6
         self.cars = []
         self.goal = [2, 5]
@@ -10,7 +10,7 @@ class State:
         self.cost = 0
 
     def puzzle_input(self):
-        puzzle = "BBIJ....IJCC..IAAMGDDK.MGH.KL.GHFFL."  # need a single puzzle string as input
+        puzzle = "JBBCCCJDD..MJAAL.MFFKL.N..KGGN.HH..."  # need a single puzzle string as input
         print(puzzle)
         for index, l in enumerate(puzzle):
             if index < 36:
@@ -19,7 +19,6 @@ class State:
                     if l in puzzle[0:index]:
                         for car in self.cars:
                             if l == car.name:
-                                # print("This car already exists")
                                 j = index % 6
                                 i = index // 6
                                 car.occupy_square.append((i, j))
@@ -28,7 +27,6 @@ class State:
                         removed = False
                         ambulance = False
                         name = l
-                        # print("Car name is " + name)
                         occupy_square = []
                         j = index % 6
                         i = index // 6
@@ -40,10 +38,6 @@ class State:
                         else:
                             vert = True
                         self.cars.append(Car(occupy_square, vert, fuel, removed, ambulance, name))
-                        # print("All cars in the list are: ")
-                        # for car in self.cars:
-                        #     print(car.name)
-
             else:
                 # print("This is the gas setting section")
                 try:
@@ -79,7 +73,8 @@ class State:
         cloned.goal = self.goal.copy()
         cloned_board = cloned.build_board()
         return cloned_board
-    def build_board(self): #makes 2D array of spaces and pieces on the space
+
+    def build_board(self):  # makes 2D array of spaces and pieces on the space
         board = [["."] * 6 for i in range(6)]
         for car in self.cars:
             for coord in car.occupy_square:
@@ -99,67 +94,88 @@ class State:
         for car in self.cars:
             for coord in car.occupy_square:
                 if car.vert:
-                    if (coord[0] + 1) < 6 and board[coord[0] + 1][coord[1]] == ".":  #square below
-                        print("The car " + car.name + " can move downwards from square " + str(coord[0]) + "," + str(coord[1]) + " to " + str(coord[0] + 1 ) + "," + str(coord[1]))
-                        moves = self.clone()
-                        for piece in car.occupy_square:
-                            moves[piece[0]][piece[1]] = "."
-                            moves[piece[0] + 1][piece[1]] = car.name #move car down
-                        for i in moves:
+                    if (coord[0] + 1) < 6 and board[coord[0] + 1][coord[1]] == ".":  # square below
+                        print("The car " + car.name + " can move downwards from square " + str(coord[0]) + "," + str(
+                            coord[1]) + " to " + str(coord[0] + 1) + "," + str(coord[1]))
+                        downn_move = self.clone()
+                        for piece in reversed(car.occupy_square):
+                            downn_move[piece[0]][piece[1]] = "."
+                            downn_move[piece[0] + 1][piece[1]] = car.name  # move car down
+                        for i in downn_move:
                             print(i)
                         print("\n")
-                        all_moves.append(moves)
-                        for i in moves:
-                            print(i)
-                        print("\n")
+                        all_moves.append(downn_move)
                     elif coord[0] + 1 >= 6:
-                        print("The car " + car.name + " can not move to downwards from square " + str(coord[0]) + "," + str(coord[1]) + " as that move is out of bounds")
+                        print("The car " + car.name + " can not move to downwards from square " + str(
+                            coord[0]) + "," + str(coord[1]) + " as that move is out of bounds")
                     else:
-                        print("The car " + car.name + " can not move downwards from square " + str(coord[0]) + "," + str(coord[1]) + " to " + str(coord[0] + 1) + "," + str(coord[1]))
+                        print(
+                            "The car " + car.name + " can not move downwards from square " + str(coord[0]) + "," + str(
+                                coord[1]) + " to " + str(coord[0] + 1) + "," + str(coord[1]))
 
-                    if (coord[0] - 1) >= 0 and board[coord[0] - 1][coord[1]] == ".":  #square above
-                        print("The car " + car.name + " can move upwards from square " + str(coord[0]) + "," + str(coord[1]) + " to " + str(coord[0] - 1 ) + "," + str(coord[1]))
-                        moves = self.clone()
+                    if (coord[0] - 1) >= 0 and board[coord[0] - 1][coord[1]] == ".":  # square above
+                        print("The car " + car.name + " can move upwards from square " + str(coord[0]) + "," + str(
+                            coord[1]) + " to " + str(coord[0] - 1) + "," + str(coord[1]))
+                        up_move = self.clone()
                         for piece in car.occupy_square:
-                            moves[piece[0]][piece[1]] = "."
-                            moves[piece[0] - 1][piece[1]] = car.name #move car up
-                        for i in moves:
+                            up_move[piece[0]][piece[1]] = "."
+                            up_move[piece[0] - 1][piece[1]] = car.name  # move car up
+                        for i in up_move:
                             print(i)
                         print("\n")
-                        all_moves.append(moves)
+                        all_moves.append(up_move)
                     elif coord[0] - 1 < 0:
-                        print("The car " + car.name + " can not move to upwards from square " + str(coord[0]) + "," + str(coord[1]) + " as that move is out of bounds")
+                        print(
+                            "The car " + car.name + " can not move to upwards from square " + str(coord[0]) + "," + str(
+                                coord[1]) + " as that move is out of bounds")
                     else:
-                        print("The car " + car.name + " can not move upwards from square " + str(coord[0]) + "," + str(coord[1]) + " to " + str(coord[0] - 1) + "," + str(coord[1]))
+                        print("The car " + car.name + " can not move upwards from square " + str(coord[0]) + "," + str(
+                            coord[1]) + " to " + str(coord[0] - 1) + "," + str(coord[1]))
 
                 else:
-                    if (coord[1] + 1) < 6 and board[coord[0]][coord[1] + 1] == ".": #square to the right
-                        print("The car " + car.name + " can move to the right from square " + str(coord[0]) + "," + str(coord[1]) + " to " + str(coord[0]) + "," + str(coord[1] + 1))
-                        moves = self.clone()
-                        for piece in car.occupy_square:
-                            moves[piece[0]][piece[1]] = "."
-                            moves[piece[0]][piece[1] + 1] = car.name #move car right
-                        for i in moves:
+                    if (coord[1] + 1) < 6 and board[coord[0]][coord[1] + 1] == ".":  # square to the right
+                        print("The car " + car.name + " can move to the right from square " + str(coord[0]) + "," + str(
+                            coord[1]) + " to " + str(coord[0]) + "," + str(coord[1] + 1))
+                        right_move = self.clone()
+                        for piece in reversed(car.occupy_square):
+                            right_move[piece[0]][piece[1]] = "."
+                            right_move[piece[0]][piece[1] + 1] = car.name  # move car right
+                        for i in right_move:
                             print(i)
                         print("\n")
-                        all_moves.append(moves)
+                        all_moves.append(right_move)
                     elif coord[1] + 1 >= 6:
-                        print("The car " + car.name + " can not move to the right from square " + str(coord[0]) + "," + str(coord[1]) + " as that move is out of bounds")
+                        print("The car " + car.name + " can not move to the right from square " + str(
+                            coord[0]) + "," + str(coord[1]) + " as that move is out of bounds")
                     else:
-                        print("The car " + car.name + " can not move to the right from square " + str(coord[0]) + "," + str(coord[1]) + " to " + str(coord[0]) + "," + str(coord[1] + 1))
+                        print("The car " + car.name + " can not move to the right from square " + str(
+                            coord[0]) + "," + str(coord[1]) + " to " + str(coord[0]) + "," + str(coord[1] + 1))
 
-                    if (coord[1] - 1) >= 0 and board[coord[0]][coord[1] - 1] == ".": #square to the left
-                        print("The car " + car.name + " can move to the left from square " + str(coord[0]) + "," + str(coord[1]) + " to " + str(coord[0]) + "," + str(coord[1] - 1))
-                        moves = self.clone()
+                    if (coord[1] - 1) >= 0 and board[coord[0]][coord[1] - 1] == ".":  # square to the left
+                        print("The car " + car.name + " can move to the left from square " + str(coord[0]) + "," + str(
+                            coord[1]) + " to " + str(coord[0]) + "," + str(coord[1] - 1))
+                        left_move = self.clone()
                         for piece in car.occupy_square:
-                            moves[piece[0]][piece[1]] = "."
-                            moves[piece[0]][piece[1] - 1] = car.name #move car left
-                        for i in moves:
+                            left_move[piece[0]][piece[1]] = "."
+                            left_move[piece[0]][piece[1] - 1] = car.name  # move car left
+                        for i in left_move:
                             print(i)
                         print("\n")
-                        all_moves.append(moves)
+                        all_moves.append(left_move)
                     elif coord[1] - 1 < 0:
-                        print("The car " + car.name + " can not move to the left from square " + str(coord[0]) + "," + str(coord[1]) + " as that move is out of bounds")
+                        print("The car " + car.name + " can not move to the left from square " + str(
+                            coord[0]) + "," + str(coord[1]) + " as that move is out of bounds")
                     else:
-                        print("The car " + car.name + " can not move to the left from square " + str(coord[0]) + "," + str(coord[1]) + " to " + str(coord[0]) + "," + str(coord[1] - 1))
+                        print("The car " + car.name + " can not move to the left from square " + str(
+                            coord[0]) + "," + str(coord[1]) + " to " + str(coord[0]) + "," + str(coord[1] - 1))
+        print("This is the original board")
+        for i in board:
+            print(i)
+        print("\n")
+
+        print("All nodes created from the original board with just one move made: ")
+        for i in all_moves:
+            for k in i:
+                print(k)
+            print("\n")
         return all_moves
