@@ -70,6 +70,15 @@ class State:
                 print("Car " + car.name + " is taking up squares " + str(coord[0]) + "," + str(coord[1]))
             print("Car " + car.name + " has " + str(car.fuel) + " fuel left \n")
 
+    def clone(self):
+        print("This is the clone")
+        cloned = State()
+        cloned.gridSize = self.gridSize
+        for car in self.cars:
+            cloned.cars.append(Car(car.occupy_square, car.vert, car.fuel, car.removed, car.ambulance, car.name))
+        cloned.goal = self.goal.copy()
+        cloned_board = cloned.build_board()
+        return cloned_board
     def build_board(self): #makes 2D array of spaces and pieces on the space
         board = [["."] * 6 for i in range(6)]
         for car in self.cars:
@@ -86,11 +95,23 @@ class State:
     def get_moves(self):
         print("Coordinates work as (vertical, horizontal)")
         board = self.build_board()
+        all_moves = []
         for car in self.cars:
             for coord in car.occupy_square:
                 if car.vert:
                     if (coord[0] + 1) < 6 and board[coord[0] + 1][coord[1]] == ".":  #square below
                         print("The car " + car.name + " can move downwards from square " + str(coord[0]) + "," + str(coord[1]) + " to " + str(coord[0] + 1 ) + "," + str(coord[1]))
+                        moves = self.clone()
+                        for piece in car.occupy_square:
+                            moves[piece[0]][piece[1]] = "."
+                            moves[piece[0] + 1][piece[1]] = car.name #move car down
+                        for i in moves:
+                            print(i)
+                        print("\n")
+                        all_moves.append(moves)
+                        for i in moves:
+                            print(i)
+                        print("\n")
                     elif coord[0] + 1 >= 6:
                         print("The car " + car.name + " can not move to downwards from square " + str(coord[0]) + "," + str(coord[1]) + " as that move is out of bounds")
                     else:
@@ -98,6 +119,14 @@ class State:
 
                     if (coord[0] - 1) >= 0 and board[coord[0] - 1][coord[1]] == ".":  #square above
                         print("The car " + car.name + " can move upwards from square " + str(coord[0]) + "," + str(coord[1]) + " to " + str(coord[0] - 1 ) + "," + str(coord[1]))
+                        moves = self.clone()
+                        for piece in car.occupy_square:
+                            moves[piece[0]][piece[1]] = "."
+                            moves[piece[0] - 1][piece[1]] = car.name #move car up
+                        for i in moves:
+                            print(i)
+                        print("\n")
+                        all_moves.append(moves)
                     elif coord[0] - 1 < 0:
                         print("The car " + car.name + " can not move to upwards from square " + str(coord[0]) + "," + str(coord[1]) + " as that move is out of bounds")
                     else:
@@ -106,6 +135,14 @@ class State:
                 else:
                     if (coord[1] + 1) < 6 and board[coord[0]][coord[1] + 1] == ".": #square to the right
                         print("The car " + car.name + " can move to the right from square " + str(coord[0]) + "," + str(coord[1]) + " to " + str(coord[0]) + "," + str(coord[1] + 1))
+                        moves = self.clone()
+                        for piece in car.occupy_square:
+                            moves[piece[0]][piece[1]] = "."
+                            moves[piece[0]][piece[1] + 1] = car.name #move car right
+                        for i in moves:
+                            print(i)
+                        print("\n")
+                        all_moves.append(moves)
                     elif coord[1] + 1 >= 6:
                         print("The car " + car.name + " can not move to the right from square " + str(coord[0]) + "," + str(coord[1]) + " as that move is out of bounds")
                     else:
@@ -113,12 +150,16 @@ class State:
 
                     if (coord[1] - 1) >= 0 and board[coord[0]][coord[1] - 1] == ".": #square to the left
                         print("The car " + car.name + " can move to the left from square " + str(coord[0]) + "," + str(coord[1]) + " to " + str(coord[0]) + "," + str(coord[1] - 1))
+                        moves = self.clone()
+                        for piece in car.occupy_square:
+                            moves[piece[0]][piece[1]] = "."
+                            moves[piece[0]][piece[1] - 1] = car.name #move car left
+                        for i in moves:
+                            print(i)
+                        print("\n")
+                        all_moves.append(moves)
                     elif coord[1] - 1 < 0:
                         print("The car " + car.name + " can not move to the left from square " + str(coord[0]) + "," + str(coord[1]) + " as that move is out of bounds")
                     else:
                         print("The car " + car.name + " can not move to the left from square " + str(coord[0]) + "," + str(coord[1]) + " to " + str(coord[0]) + "," + str(coord[1] - 1))
-
-        for i in board:
-            print(i)
-        print("\n")
-        return board
+        return all_moves
