@@ -2,15 +2,15 @@ from Car import Car
 
 
 class State:
-    def __init__(self):
+    def __init__(self): #grid will start at top left point 0,0 | top right
         self.gridSize = 6
         self.cars = []
-        self.goal = [3, 6]
+        self.goal = [2, 5]
         self.prev = None
         self.cost = 0
 
     def puzzle_input(self):
-        puzzle = "IJBBCCIJDDL.IJAAL.EEK.L...KFF..GGHH. F0 G6"  # need a single puzzle string as input
+        puzzle = "BBIJ....IJCC..IAAMGDDK.MGH.KL.GHFFL."  # need a single puzzle string as input
         print(puzzle)
         for index, l in enumerate(puzzle):
             if index < 36:
@@ -84,10 +84,41 @@ class State:
         print("\n")
 
     def get_moves(self):
+        print("Coordinates work as (vertical, horizontal)")
         board = self.build_board()
         for car in self.cars:
-            if car.vert:
-                for coord in car.occupy_square:
-                    board[coord[0] - 1][coord[1] -1] = "."
-        self.print_board()
+            for coord in car.occupy_square:
+                if car.vert:
+                    if (coord[0] + 1) < 6 and board[coord[0] + 1][coord[1]] == ".":  #square below
+                        print("The car " + car.name + " can move downwards from square " + str(coord[0]) + "," + str(coord[1]) + " to " + str(coord[0] + 1 ) + "," + str(coord[1]))
+                    elif coord[0] + 1 >= 6:
+                        print("The car " + car.name + " can not move to downwards from square " + str(coord[0]) + "," + str(coord[1]) + " as that move is out of bounds")
+                    else:
+                        print("The car " + car.name + " can not move downwards from square " + str(coord[0]) + "," + str(coord[1]) + " to " + str(coord[0] + 1) + "," + str(coord[1]))
+
+                    if (coord[0] - 1) >= 0 and board[coord[0] - 1][coord[1]] == ".":  #square above
+                        print("The car " + car.name + " can move upwards from square " + str(coord[0]) + "," + str(coord[1]) + " to " + str(coord[0] - 1 ) + "," + str(coord[1]))
+                    elif coord[0] - 1 < 0:
+                        print("The car " + car.name + " can not move to upwards from square " + str(coord[0]) + "," + str(coord[1]) + " as that move is out of bounds")
+                    else:
+                        print("The car " + car.name + " can not move upwards from square " + str(coord[0]) + "," + str(coord[1]) + " to " + str(coord[0] - 1) + "," + str(coord[1]))
+
+                else:
+                    if (coord[1] + 1) < 6 and board[coord[0]][coord[1] + 1] == ".": #square to the right
+                        print("The car " + car.name + " can move to the right from square " + str(coord[0]) + "," + str(coord[1]) + " to " + str(coord[0]) + "," + str(coord[1] + 1))
+                    elif coord[1] + 1 >= 6:
+                        print("The car " + car.name + " can not move to the right from square " + str(coord[0]) + "," + str(coord[1]) + " as that move is out of bounds")
+                    else:
+                        print("The car " + car.name + " can not move to the right from square " + str(coord[0]) + "," + str(coord[1]) + " to " + str(coord[0]) + "," + str(coord[1] + 1))
+
+                    if (coord[1] - 1) >= 0 and board[coord[0]][coord[1] - 1] == ".": #square to the left
+                        print("The car " + car.name + " can move to the left from square " + str(coord[0]) + "," + str(coord[1]) + " to " + str(coord[0]) + "," + str(coord[1] - 1))
+                    elif coord[1] - 1 < 0:
+                        print("The car " + car.name + " can not move to the left from square " + str(coord[0]) + "," + str(coord[1]) + " as that move is out of bounds")
+                    else:
+                        print("The car " + car.name + " can not move to the left from square " + str(coord[0]) + "," + str(coord[1]) + " to " + str(coord[0]) + "," + str(coord[1] - 1))
+
+        for i in board:
+            print(i)
+        print("\n")
         return board
