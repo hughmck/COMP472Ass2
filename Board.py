@@ -11,3 +11,7 @@ class Board:
         cloned.board_state = self.board_state
         cloned.cost = self.cost
         return cloned
+
+    def piece_exit(self):
+        if self.board_state[2][5] != ".":
+            return True
