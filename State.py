@@ -90,7 +90,9 @@ class State:
             print(i)
         print("\n")
 
-    def get_moves(self, board=build_board()):
+
+    def get_moves(self, build):
+        build_board = self.build_board()
         print("Coordinates work as (vertical, horizontal)")
         all_moves = []
         for index, car in enumerate(self.cars):
